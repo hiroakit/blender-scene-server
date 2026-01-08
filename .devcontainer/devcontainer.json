@@ -1,0 +1,19 @@
+{
+  "name": "Blender Headless (amd64)",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "platform": "linux/amd64",
+  "workspaceFolder": "/work",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/work,type=bind",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-toolsai.jupyter",
+        "tamasfe.even-better-toml"
+      ]
+    }
+  },
+  "postCreateCommand": "python3 --version && blender --version"
+}
