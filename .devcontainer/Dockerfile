@@ -6,6 +6,10 @@ FROM --platform=linux/amd64 debian:bookworm-slim AS blender-builder
 ARG BLENDER_VERSION=4.2.3
 ARG BLENDER_TAR=blender-${BLENDER_VERSION}-linux-x64.tar.xz
 ARG BLENDER_URL=https://download.blender.org/release/Blender4.2/${BLENDER_TAR}
+# How this SHA256 was obtained:
+# - Download the exact tarball and compute sha256.
+#   e.g. `curl -fsSL "${BLENDER_URL}" | sha256sum | awk '{print $1}'`
+#   (or download to a file and run `sha256sum blender-<ver>-linux-x64.tar.xz`)
 ARG BLENDER_SHA256=3a64efd1982465395abab4259b4091d5c8c56054c7267e9633e4f702a71ea3f4
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
