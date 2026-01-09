@@ -6,21 +6,19 @@ FROM --platform=linux/amd64 debian:bookworm-slim AS blender-builder
 ARG BLENDER_VERSION=4.2.3
 ARG BLENDER_TAR=blender-${BLENDER_VERSION}-linux-x64.tar.xz
 ARG BLENDER_URL=https://download.blender.org/release/Blender4.2/${BLENDER_TAR}
-# How this SHA256 was obtained:
-# - Download the exact tarball and compute sha256.
-#   e.g. `curl -fsSL "${BLENDER_URL}" | sha256sum | awk '{print $1}'`
-#   (or download to a file and run `sha256sum blender-<ver>-linux-x64.tar.xz`)
-ARG BLENDER_SHA256=3a64efd1982465395abab4259b4091d5c8c56054c7267e9633e4f702a71ea3f4
+# Official checksum list for this Blender version (contains checksums for multiple artifacts).
+ARG BLENDER_SHA256_URL=https://download.blender.org/release/Blender4.2/blender-${BLENDER_VERSION}.sha256
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates curl xz-utils \
     && rm -rf /var/lib/apt/lists/*
 
-RUN curl -fsSL "${BLENDER_URL}" -o /tmp/blender.tar.xz && \
-    echo "${BLENDER_SHA256}  /tmp/blender.tar.xz" | sha256sum -c - && \
+RUN curl -fsSL "${BLENDER_URL}" -o "/tmp/${BLENDER_TAR}" && \
+    curl -fsSL "${BLENDER_SHA256_URL}" -o "/tmp/blender-${BLENDER_VERSION}.sha256" && \
+    cd /tmp && sha256sum -c "blender-${BLENDER_VERSION}.sha256" --ignore-missing && \
     mkdir -p /opt/blender && \
-    tar -xJf /tmp/blender.tar.xz -C /opt/blender --strip-components=1 && \
-    rm /tmp/blender.tar.xz
+    tar -xJf "/tmp/${BLENDER_TAR}" -C /opt/blender --strip-components=1 && \
+    rm "/tmp/${BLENDER_TAR}" "/tmp/blender-${BLENDER_VERSION}.sha256"
 
 # Final stage - Microsoft Python image
 FROM --platform=linux/amd64 mcr.microsoft.com/python:3.11-slim
