@@ -20,8 +20,8 @@ RUN curl -fsSL "${BLENDER_URL}" -o "/tmp/${BLENDER_TAR}" && \
     tar -xJf "/tmp/${BLENDER_TAR}" -C /opt/blender --strip-components=1 && \
     rm "/tmp/${BLENDER_TAR}" "/tmp/blender-${BLENDER_VERSION}.sha256"
 
-# Final stage - Microsoft Python image
-FROM --platform=linux/amd64 mcr.microsoft.com/python:3.11-slim
+# Final stage - Official Python image (Debian Bookworm slim)
+FROM --platform=linux/amd64 python:3.11-slim-bookworm
 
 ENV DEBIAN_FRONTEND=noninteractive
 
